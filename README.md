@@ -38,6 +38,31 @@ The Master interface programs parameters directly to slave registers to establis
 *   **Output Back to Zero (OBZ):** Sets voltage and temperature safety parameters to catch hardware variations.
 *   **Nominal Configuration:** Defines steady-state voltage values for the rails once the system initializes.
 
+## 🚦 Core FSM State Machine Routing & Operational States
+
+The underlying operational scheduling of the Facility Manager (FCM) is driven by a deterministic Finite State Machine (FSM) that bridges three distinct operational regions: **INIT** (Initialization), **OPER** (Normal Operations/Autotest), and **POWERDOWN** (Sequence Containment).
+
+### 1. Initialization Phase (INIT Loop)
+*   **RESET State:** Entered upon a physical low assertion on `FCM_RESET_N`. The system drives default baseline signals (`BBCP_FOZ_ENA = 0`, `BBNT_FOZ_ENA = 0`, `FCM_EN_IP = 0`). Once `FCM_PW_ON = '1'`, the machine routes into the configuration check loops.
+*   **OBZ (Out of Bound Zone) State:** Initiates localized I2C write cycles to program the initial OBZ parameters down to the respective building block's LTC controllers. If an internal configuration validation fails or if an over-voltage (OV) condition is captured during this window, a fault flag triggers an immediate fallback to `IMMINENT SHUTDOWN`. If configuration passes safely, the state shifts on `OBZ_OK = '1'`.
+*   **WAIT State:** Holds processing execution boundaries pending system status changes. Once the data buffer asserts `EFULL = '1'`, the FSM transitions directly into target initialization.
+*   **INITIALIZATION State:** Continues nominal LTC controller configurations. It enforces strict setup rules, watching for proper time windows (`T_initialization`) and validating that `PROGRAM_OK = '1'` before pushing the system out into steady-state monitoring loops.
+
+### 2. Operational Phase (OPER & AUTOTEST Loops)
+*   **NORMAL State:** The steady-state runtime window for the avionics unit. The FCM periodically updates internal registers and continuously sweeps background status reads from the active LTC rails over the shared I2C channels.
+*   **AUTOTEST State:** Triggered when software routines assert `CONTROL_AUTEST.LTC_AUTOTEST = '1'`. The FCM suspends baseline tasks to execute critical **BITS (Built-in Test Sequences)** over a designated duration (`T_Autotest`). If background parameter readings fail continuously (exceeding a maximum counter of 3 attempts), the FSM forces execution back to previous recovery loops.
+
+### 3. Graceful Containment Phase (POWERDOWN Staging)
+The FSM continuously guards active lines against critical failures. An immediate transition to the `IMMINENT SHUTDOWN` node is executed if any of the following hardware triggers trip:
+*   A drop in primary input supply lines lasting over 200ms (`FCM_PW_ON = '0' for >200ms`).
+*   Direct hardware over-voltage or over-temperature flag signals (`FCM_OVP_N` or `FCM_OTP_N` drive low).
+*   Active manual hardware reset signals held for over 500ms (`FCM_MANUAL_RESET_N = '0' for 500ms`).
+*   Repeated write anomalies where writing the LTC configuration parameters fails three consecutive times.
+
+#### Adaptive Emergency Power-Down Staging paths:
+*   **IMMINENT SHUTDOWN:** Instantly triggers an interrupt line (`FCM_PS_IRQ_N`) and freezes vital logs out into the `FMEM` flash partition block.
+*   **SHORTCUT / POWERDOWN Staging:** Stepped intervals systematically collapse voltage lines based on failure severity timelines (`T_imminent` / `T_shortcut`), sequentially isolating peripheral components to safeguard the master processing core fabric from residual back-power damage.
+
 ---
 
 ### B. Slave Mode: FMEM Diagnostic Logging Interconnect
