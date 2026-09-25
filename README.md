@@ -73,7 +73,7 @@ The Facility Manager splits its supervisor duties among independent operational 
 *   **Functionality:** Manages volatile data preservation states for the processor's external memory.
 *   **Mechanics:** Controls transitions between **Cut-Off Mode** (which safely clears out active blocks) and **Self-Refresh Mode** (which supplies low-level background power to preserve memory registers during unexpected supply losses).
 
-### PS Management (Power Supply Supervisor)
+### PS Management (Power Supply Management)
 *   **Functionality:** Constantly checks primary voltage parameters and manages core communication links with the processor.
 *   **Mechanics:** Emulates health parameters and generates system-wide interrupts (`FCM_PS_IRQ_N`) if faults occur. It distinguishes between a **Long Power Failure (LPF > 200ms)** and a **Very Long Power Failure (VLPF > 5s)** to adaptively trigger power-down staging.
 
