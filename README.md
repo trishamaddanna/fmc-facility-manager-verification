@@ -6,22 +6,6 @@ A safety-critical **VHDL testbench architecture and protocol emulation suite** f
 
 ---
 
-## 🛠️ Toolchain Infrastructure & Verification Metrics
-
-To meet stringent aerospace reliability and safety requirements, professional, industry-standard electronic design automation (EDA) tools were utilized throughout the development and validation lifecycle:
-
-*   **RTL Design & Testbenches:** Modeled and constructed using **Microsemi Libero Integrated Development Environment (IDE)**. All architectural sub-modules and top-level verification scripts are targeted for synthesizable FPGA fabrics.
-*   **Simulation & Waveform Analysis:** Executed inside **QuestaSim** to perform hardware-in-the-loop emulation, boundary timing validation, and multi-device interaction modeling.
-*   **Comprehensive Code Coverage Automation:** Advanced TCL scripting workflows were deployed within **QuestaSim** to systematically measure and report the following structural metrics:
-    *   *Line Coverage:* Validates that every isolated statement block executes under testing vectors.
-    *   *Block Coverage:* Ensures all sub-module functional paths are traversed.
-    *   *Branch Coverage:* Checks both `true` and `false` pathways for every conditional switch.
-    *   *Condition Coverage:* Evaluates Boolean expression permutations within logical control blocks.
-    *   *FSM State Coverage:* Verifies that every distinct operational state within the Finite State Machine core is successfully visited.
-    *   *FSM Transition Coverage:* Confirms 100% path coverage across all active state transition boundaries.
-
----
-
 ## 📐 System Architecture & Interconnect Topology
 
 The Facility Manager (FCM) functions as the hardware supervisor within the FMC framework. The system is structurally split across the **CPUIO** card (containing the CPU, networking processor, and the FCM) and the **Power IO** card (containing the BBEXT, BBMISC and BBSBE2), joined by a dedicated physical interface interconnect.
@@ -131,6 +115,22 @@ The structural VHDL environment subjects the FSM to severe power rail drops to v
 ### Functional and Code Coverage Automation
 *   **Scripted Infrastructure:** Verification execution is driven by **TCL scripting automation** within the simulator environment.
 *   **Metric Extraction:** The scripts compile VHDL design hierarchies, inject automated test vectors, and compile full structural code coverage and functional feature checklists. This ensures complete compliance with strict aerospace reliability definitions.
+
+---
+
+## 🛠️ Toolchain Infrastructure & Verification Metrics
+
+To meet stringent aerospace reliability and safety requirements, professional, industry-standard electronic design automation (EDA) tools were utilized throughout the development and validation lifecycle:
+
+*   **RTL Design & Testbenches:** Modeled and constructed using **Microsemi Libero Integrated Development Environment (IDE)**. All architectural sub-modules and top-level verification scripts are targeted for synthesizable FPGA fabrics.
+*   **Simulation & Waveform Analysis:** Executed inside **QuestaSim** to perform hardware-in-the-loop emulation, boundary timing validation, and multi-device interaction modeling.
+*   **Comprehensive Code Coverage Automation:** Advanced TCL scripting workflows were deployed within **QuestaSim** to systematically measure and report the following structural metrics:
+    *   *Line Coverage:* Validates that every isolated statement block executes under testing vectors.
+    *   *Block Coverage:* Ensures all sub-module functional paths are traversed.
+    *   *Branch Coverage:* Checks both `true` and `false` pathways for every conditional switch.
+    *   *Condition Coverage:* Evaluates Boolean expression permutations within logical control blocks.
+    *   *FSM State Coverage:* Verifies that every distinct operational state within the Finite State Machine core is successfully visited.
+    *   *FSM Transition Coverage:* Confirms 100% path coverage across all active state transition boundaries.
 
 ---
 
