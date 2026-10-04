@@ -44,7 +44,7 @@ The underlying operational scheduling of the Facility Manager (FCM) is driven by
 
 ### 1. Initialization Phase (INIT Loop)
 *   **RESET State:** Entered upon a physical low assertion on `FCM_RESET_N`. The system drives default baseline signals (`BBCP_FOZ_ENA = 0`, `BBNT_FOZ_ENA = 0`, `FCM_EN_IP = 0`). Once `FCM_PW_ON = '1'`, the machine routes into the configuration check loops.
-*   **OBZ (Out of Bound Zone) State:** Initiates localized I2C write cycles to program the initial OBZ parameters down to the respective building block's LTC controllers. If an internal configuration validation fails or if an over-voltage (OV) condition is captured during this window, a fault flag triggers an immediate fallback to `IMMINENT SHUTDOWN`. If configuration passes safely, the state shifts on `OBZ_OK = '1'`.
+*   **OBZ (Output Back to Zero) State:** Initiates localized I2C write cycles to program the initial OBZ parameters down to the respective building block's LTC controllers. If an internal configuration validation fails or if an over-voltage (OV) condition is captured during this window, a fault flag triggers an immediate fallback to `IMMINENT SHUTDOWN`. If configuration passes safely, the state shifts on `OBZ_OK = '1'`.
 *   **WAIT State:** Holds processing execution boundaries pending system status changes. Once the data buffer asserts `EFULL = '1'`, the FSM transitions directly into target initialization.
 *   **INITIALIZATION State:** Continues nominal LTC controller configurations. It enforces strict setup rules, watching for proper time windows (`T_initialization`) and validating that `PROGRAM_OK = '1'` before pushing the system out into steady-state monitoring loops.
 
