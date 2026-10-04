@@ -24,7 +24,7 @@ The system coordinates **5 distinct Micro-Facility-Manager (uFCM) Building Block
 The FCM handles power configuration parameters and system debugging via a dual-role I2C structure, processing two independent physical communication profiles concurrently:
 
 ### A. Master Mode: LTC Hardware Configuration Array
-In Master Mode, the FCM drives transactions to monitor power supply rails using external Linear Technology controllers (**LTC 0 at address `0x50`**, **LTC 1 at address `0x52`**) embedded across each building block.
+In Master Mode, the FCM drives transactions to monitor power supply rails using ICs (LTC = IC containing 6 channels) (**LTC 0 at address `0x50`**, **LTC 1 at address `0x52`**) embedded across each building block.
 
 #### Message Frame Format
 LTC transactions leverage an integrated 16-bit **Write Word** and **Read Word** format containing localized device sub-address command bytes:
