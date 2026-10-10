@@ -138,15 +138,15 @@ To meet stringent aerospace reliability and safety requirements, professional, i
 
 Because the core RTL blocks contain sensitive aerospace IP, this repository focuses exclusively on **architectural verification layout diagrams, timing waveforms, and script assets** used to validate the chip:
 
-*   `facility_manager_bd.jpg` — Block diagram illustrating the unified system architecture and internal sub-module partitioning.
-*   `fmc_fsm.jpg` — Detailed implementation map layout documenting the core Finite State Machine state transitions.
-*   `ufcm_filter_waveform.jpg` — Simulation trace checking signal assertion filtering against input glitches under custom constraints (`FIL_TIME`).
-*   `ddr_manage_waveform.jpg` — Timing capture confirming correct DDR Cut-Off and low-power Self-Refresh activation handshakes.
-*   `ps_management_waveform.jpg` — Signal log mapping core processing communications, interrupt assertions, and LPF/VLPF boundary checks.
-*   `i2c_master_slaves_arch.jpg` — Hardware mapping showing the I2C Master (FCM) and dual Slaves (LTC 0, LTC 1) bus matrix layout across all 5 building blocks.
-*   `i2c_msg_format_ltc.jpg` -> Schematic guide tracking specific start, control, ACK, and stop frame packet layouts for LTC communications.
-*   `sim_waveform_bb0_write.jpg` — Functional simulation trace recording successful bus writes to the `BB0 - BBCP` sub-registers.
-*   `sim_waveform_bb0_read.jpg` — Functional simulation trace tracking bus data loopback reads through the I2C channel.
-*   `sim_waveform_bb0_obz_nominal.jpg` — Waveform trace verifying output-back-to-zero validation routines alongside active nominal configuration status checks.
-*   `i2c_cnt_slave_fcm_arch.jpg` — Architecture blueprint illustrating the second I2C master channel interconnect (`i2c_cnt`) routing data into the FCM acting as a Slave device.
-*   `i2c_msg_format_fmem.jpg` — Bit-level reference document detailing the byte and page formatting protocols required for `FMEM` flash memory offloads.
+*   `facility_manager_bd.png` — Block diagram illustrating the unified system architecture and internal sub-module partitioning.
+*   `fmc_fsm.png` — Detailed implementation map layout documenting the core Finite State Machine state transitions.
+*   `ufcm_filter_waveform.png` — Simulation trace checking signal assertion filtering against input glitches under custom constraints (`FIL_TIME`).
+*   `ddr_manage_waveform.png` — Timing capture confirming correct DDR Cut-Off and low-power Self-Refresh activation handshakes.
+*   `ps_management_waveform.png` — Signal log mapping core processing communications, interrupt assertions, and LPF/VLPF boundary checks.
+*   `i2c_master_slaves_arch.png` — Hardware mapping showing the I2C Master (FCM) and dual Slaves (LTC 0, LTC 1) bus matrix layout across all 5 building blocks.
+*   `i2c_msg_format_ltc.png` -> Schematic guide tracking specific start, control, ACK, and stop frame packet layouts for LTC communications.
+*   `sim_waveform_bb0_write.png` — Functional simulation trace recording successful bus writes to the `BB0 - BBCP` sub-registers.
+*   `sim_waveform_bb0_read.png` — Functional simulation trace tracking bus data loopback reads through the I2C channel.
+*   `sim_waveform_bb0_obz_nominal.png` — Waveform trace verifying output-back-to-zero validation routines alongside active nominal configuration status checks.
+*   `i2c_cnt_slave_fcm_arch.png` — Architecture blueprint illustrating the second I2C master channel interconnect (`i2c_cnt`) routing data into the FCM acting as a Slave device.
+*   `i2c_msg_format_fmem.png` — Bit-level reference document detailing the byte and page formatting protocols required for `FMEM` flash memory offloads.
