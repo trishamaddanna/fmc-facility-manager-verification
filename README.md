@@ -144,7 +144,7 @@ Because the core RTL blocks contain sensitive aerospace IP, this repository focu
 *   `ddr_manage_waveform.png` — Timing capture confirming correct DDR Cut-Off and low-power Self-Refresh activation handshakes.
 *   `ps_management_waveform.png` — Signal log mapping core processing communications, interrupt assertions, and LPF/VLPF boundary checks.
 *   `i2c_master_slaves_arch.png` — Hardware mapping showing the I2C Master (FCM) and dual Slaves (LTC 0, LTC 1) bus matrix layout across all 5 building blocks.
-*   `i2c_msg_format_ltc.png` -> Schematic guide tracking specific start, control, ACK, and stop frame packet layouts for LTC communications.
+*   `i2c_msg_format_ltc.png` — Schematic guide tracking specific start, control, ACK, and stop frame packet layouts for LTC communications.
 *   `sim_waveform_bb0_write.png` — Functional simulation trace recording successful bus writes to the `BB0 - BBCP` sub-registers.
 *   `sim_waveform_bb0_read.png` — Functional simulation trace tracking bus data loopback reads through the I2C channel.
 *   `sim_waveform_bb0_obz_nominal.png` — Waveform trace verifying output-back-to-zero validation routines alongside active nominal configuration status checks.
