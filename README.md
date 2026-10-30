@@ -1,8 +1,10 @@
 # fmc-facility-manager-verification
-Aerospace-grade VHDL verification suite and dual-role I2C protocol emulation for the Power Management FPGA (Facility Manager) in Flight Management Computer (FMC) 
-# VHDL Verification & I2C Protocol Interconnect for Avionics Facility Manager
+ 
+# FMC Facility Manager – VHDL Verification and I²C Protocol Emulation
 
-A safety-critical **VHDL testbench architecture and protocol emulation suite** for the 'Facility Manager' (FCM)—a dedicated Power Management block residing within a **Flight Management Computer (FMC)**. Developed and verified under strict aerospace validation standards, this project coordinates autonomous hardware power staging, multi-slave I2C topology mapping, and error-logging memory verification using automated VHDL testbenches.
+**A VHDL verification environment and dual-role I²C protocol emulation suite for the Facility Manager (FCM), a power-management FPGA within a Flight Management Computer (FMC).**
+
+This project focuses on simulation-based verification of the FCM's power-management functions, multi-device I²C communication, diagnostic memory access, and fault-handling sequences. The verification environment uses modular VHDL testbenches, protocol models, automated test scenarios, and TCL-based coverage analysis.
 
 ---
 
@@ -19,12 +21,12 @@ The system coordinates **5 distinct Micro-Facility-Manager (uFCM) Building Block
 
 ---
 
-## ⚡ 1. Dual-Role I2C Interface Engineering
+## ⚡ 1. Dual-Role I²C Interface Engineering
 
-The FCM handles power configuration parameters and system debugging via a dual-role I2C structure, processing two independent physical communication profiles concurrently:
+The Facility Manager (FCM) supports two distinct I²C operating roles for power-management configuration and diagnostic data access:
 
 ### A. Master Mode: LTC Hardware Configuration Array
-In Master Mode, the FCM drives transactions to monitor power supply rails using ICs (LTC = IC containing 6 channels, which indicate over-voltage or under-voltage if present) (**LTC 0 at address `0x50`**, **LTC 1 at address `0x52`**) embedded across each building block.
+In Master Mode, the FCM initiates I²C transactions with LTC 0 (0x50) and LTC 1 (0x52), which provide six voltage-monitoring channels each. These devices are distributed across the five hardware building blocks and support power-rail monitoring and configuration.
 
 #### Message Frame Format
 LTC transactions leverage an integrated 16-bit **Write Word** and **Read Word** format containing localized device sub-address command bytes:
@@ -44,7 +46,7 @@ The underlying operational scheduling of the Facility Manager (FCM) is driven by
 
 ### 1. Initialization Phase (INIT Loop)
 *   **RESET State:** Entered upon a physical low assertion on `FCM_RESET_N`. The system drives default baseline signals (`BBCP_FOZ_ENA = 0`, `BBNT_FOZ_ENA = 0`, `FCM_EN_IP = 0`). Once `FCM_PW_ON = '1'`, the machine routes into the configuration check loops.
-*   **OBZ (Output Back to Zero) State:** Initiates localized I2C write cycles to program the initial OBZ parameters down to the respective building block's LTC controllers. If an internal configuration validation fails or if an over-voltage (OV) condition is captured during this window, a fault flag triggers an immediate fallback to `IMMINENT SHUTDOWN`. If configuration passes safely, the state shifts on `OBZ_OK = '1'`.
+*   **OBZ (Output Back to Zero) State:** Initiates I²C write transactions to program the initial OBZ parameters into the LTC controllers associated with the respective building blocks. If an internal configuration validation fails or if an over-voltage (OV) condition is captured during this window, a fault flag triggers an immediate fallback to `IMMINENT SHUTDOWN`. If configuration passes safely, the state shifts on `OBZ_OK = '1'`.
 *   **WAIT State:** Holds processing execution boundaries pending system status changes. Once the data buffer asserts `EFULL = '1'`, the FSM transitions directly into target initialization.
 *   **INITIALIZATION State:** Continues nominal LTC controller configurations. It enforces strict setup rules, watching for proper time windows (`T_initialization`) and validating that `PROGRAM_OK = '1'` before pushing the system out into steady-state monitoring loops.
 
@@ -60,13 +62,13 @@ The FSM continuously guards active lines against critical failures. An immediate
 *   Repeated write anomalies where writing the LTC configuration parameters fails three consecutive times.
 
 #### Adaptive Emergency Power-Down Staging paths:
-*   **IMMINENT SHUTDOWN:** Instantly triggers an interrupt line (`FCM_PS_IRQ_N`) and freezes vital logs out into the `FMEM` flash partition block.
-*   **SHORTCUT / POWERDOWN Staging:** Stepped intervals systematically collapse voltage lines based on failure severity timelines (`T_imminent` / `T_shortcut`), sequentially isolating peripheral components to safeguard the master processing core fabric from residual back-power damage.
+* **IMMINENT SHUTDOWN:** Triggers an interrupt line (`FCM_PS_IRQ_N`) and preserves diagnostic logs in the FMEM flash partition.
+* **SHORTCUT / POWERDOWN Staging:** Uses timed intervals (`T_imminent` / `T_shortcut`) to sequence power-rail shutdown and support controlled power-down and memory preservation.
 
 ---
 
 ### B. Slave Mode: FMEM Diagnostic Logging Interconnect
-When executing ground troubleshooting or downloading failure metrics, the FCM functions as an **I2C Slave**, responding to queries initiated by an external I2C test controller (`i2c_cnt`).
+In Slave Mode, the FCM responds to transactions initiated by an external I²C test controller (`i2c_cnt`). This interface provides register-level access to the FCM and supports read/write transactions for retrieving and updating diagnostic data in the non-volatile Flash Memory (FMEM).
 
 #### Message Frame Format
 Data offloading captures black-box records via **Byte/Page Write** and **Byte/Page Read** sequences:
@@ -78,7 +80,7 @@ Data offloading captures black-box records via **Byte/Page Write** and **Byte/Pa
 #### Technical Explanation
 This secondary channel facilitates structural non-volatile diagnostic transfers:
 *   **Log Extraction:** Emulates the extraction of Flash Memory (`FMEM`) history words stored during imminent hardware shutdown routines.
-*   **Workspace Validation:** The testbench drives configuration values (baud rate, etc.) to evaluate page write alignment, ensuring critical diagnostics save accurately without data mismatch errors during emergency power severs.
+*   **Workspace Validation:** The testbench drives diagnostic read/write transactions to verify page alignment, address handling, and data integrity during FMEM access.
 
 ---
 
@@ -109,28 +111,27 @@ The Facility Manager splits its supervisor duties among independent operational 
 ### Failure Testing & Power-Off Sequencing
 The structural VHDL environment subjects the FSM to severe power rail drops to verify critical containment routines:
 1.  **Reset Phase:** Asserts `FCM_MANUAL_RESET_N = 1` and systematically monitors internal voltage lines.
-2.  **Staged Activation:** Verifies sequential delay pacing during power-up. For instance, `BBCP_EN_GRP0` fires first, followed by `GRP1` and `GRP2` after a 4ms delay, and `GRP3` after a 1ms step. This confirms the system prevents high current inrush loads.
-3.  **Emergency Log Sequence:** Validates that if an LPF or VLPF state is caught, the system holds voltage gates active long enough for the processor to flash operating logs to `FMEM` before memory paths are completely cut off.
+2.  **Staged Activation:** Verifies sequential delay pacing during power-up. For instance, `BBCP_EN_GRP0` fires first, followed by `GRP1` and `GRP2` after a 4ms delay, and `GRP3` after a 1ms step. This verifies the intended power-up sequencing and staged activation of the hardware building blocks.
+3.  **Emergency Log Sequence:** Validates that if an LPF or VLPF state is caught, the system holds voltage gates active long enough for the processor to write diagnostic logs to `FMEM` before memory paths are completely cut off.
 
 ### Functional and Code Coverage Automation
 *   **Scripted Infrastructure:** Verification execution is driven by **TCL scripting automation** within the simulator environment.
-*   **Metric Extraction:** The scripts compile VHDL design hierarchies, inject automated test vectors, and compile full structural code coverage and functional feature checklists. This ensures complete compliance with strict aerospace reliability definitions.
+*   **Metric Extraction:** The scripts compile the VHDL design hierarchy, execute automated test scenarios, and collect structural code-coverage metrics and functional coverage results. This ensures coverage measurement against the defined verification objectives.
 
 ---
 
 ## 🛠️ Toolchain Infrastructure & Verification Metrics
 
-To meet stringent aerospace reliability and safety requirements, professional, industry-standard electronic design automation (EDA) tools were utilized throughout the development and validation lifecycle:
+To meet avionics system verification requirements, professional, industry-standard electronic design automation (EDA) tools were utilized throughout the development and validation lifecycle:
 
-*   **RTL Design & Testbenches:** Modeled and constructed using **Microsemi Libero Integrated Development Environment (IDE)**. All architectural sub-modules and top-level verification scripts are targeted for synthesizable FPGA fabrics.
-*   **Simulation & Waveform Analysis:** Executed inside **QuestaSim** to perform hardware-in-the-loop emulation, boundary timing validation, and multi-device interaction modeling.
+*   **RTL Design and Verification Environment:** Developed the VHDL RTL modules, testbenches, and verification scripts using **Microsemi Libero IDE**. Executed functional simulations and waveform analysis in **QuestaSim**, with TCL scripts automating test execution and coverage analysis.
 *   **Comprehensive Code Coverage Automation:** Advanced TCL scripting workflows were deployed within **QuestaSim** to systematically measure and report the following structural metrics:
-    *   *Line Coverage:* Validates that every isolated statement block executes under testing vectors.
-    *   *Block Coverage:* Ensures all sub-module functional paths are traversed.
+    *   *Line Coverage:* Measures the execution of individual executable lines of RTL code.
+    *   *Block Coverage:* Measures the execution of defined code blocks within the RTL hierarchy.
     *   *Branch Coverage:* Checks both `true` and `false` pathways for every conditional switch.
     *   *Condition Coverage:* Evaluates Boolean expression permutations within logical control blocks.
     *   *FSM State Coverage:* Verifies that every distinct operational state within the Finite State Machine core is successfully visited.
-    *   *FSM Transition Coverage:* Confirms 100% path coverage across all active state transition boundaries.
+    *   *FSM Transition Coverage:* Confirms 100% FSM transition coverage across the defined state transitions.
 
 ---
 
