@@ -1,5 +1,3 @@
-# fmc-facility-manager-verification
- 
 # FMC Facility Manager – VHDL Verification and I²C Protocol Emulation
 
 **A VHDL verification environment and dual-role I²C protocol emulation suite for the Facility Manager (FCM), a power-management FPGA within a Flight Management Computer (FMC).**
