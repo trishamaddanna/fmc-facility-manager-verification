@@ -131,7 +131,8 @@ To meet avionics system verification requirements, professional, industry-standa
     *   *Branch Coverage:* Checks both `true` and `false` pathways for every conditional switch.
     *   *Condition Coverage:* Evaluates Boolean expression permutations within logical control blocks.
     *   *FSM State Coverage:* Verifies that every distinct operational state within the Finite State Machine core is successfully visited.
-    *   *FSM Transition Coverage:* Confirms 100% FSM transition coverage across the defined state transitions.
+    *   *FSM Transition Coverage:* Verifies execution of all defined FSM state transitions.
+    *   *Overall Verification Coverage:* Achieved 100% code and functional coverage across the defined verification scope.
 
 ---
 
