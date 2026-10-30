@@ -139,7 +139,7 @@ To meet avionics system verification requirements, professional, industry-standa
 Because the core RTL blocks contain sensitive aerospace IP, this repository focuses exclusively on **architectural verification layout diagrams, timing waveforms, and script assets** used to validate the chip:
 
 *   `facility_manager_bd.png` — Block diagram illustrating the unified system architecture and internal sub-module partitioning.
-*   `fmc_fsm.png` — Detailed implementation map layout documenting the core Finite State Machine state transitions.
+*   `fcm_fsm.png` — Detailed implementation map layout documenting the core Finite State Machine state transitions.
 *   `ufcm_filter_waveform.png` — Simulation trace checking signal assertion filtering against input glitches under custom constraints (`FIL_TIME`).
 *   `ddr_manage_waveform.png` — Timing capture confirming correct DDR Cut-Off and low-power Self-Refresh activation handshakes.
 *   `ps_management_waveform.png` — Signal log mapping core processing communications, interrupt assertions, and LPF/VLPF boundary checks.
